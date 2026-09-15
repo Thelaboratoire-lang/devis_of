@@ -138,40 +138,71 @@
     max-width:640px;
     background:var(--paper);
     border:1px solid var(--paper-line);
-    padding:36px 40px;
+    padding:32px 36px;
     font-family:Georgia,"Times New Roman",serif;
     font-size:13px;
     color:var(--ink);
     line-height:1.4;
     min-height:600px;
   }
+  .doc-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    background:var(--accent-soft);
+    border:1px solid var(--accent);
+    border-radius:8px;
+    padding:14px 18px;
+    margin-bottom:18px;
+    font-family:-apple-system,sans-serif;
+  }
+  .doc-head .org-name{font-weight:700;font-size:14px;color:var(--ink);}
+  .doc-head .org-sub{font-size:10.5px;color:var(--ink-soft);margin-top:3px;line-height:1.5;}
+  .doc-head .badge{text-align:right;white-space:nowrap;}
+  .doc-head .badge .num{font-size:16px;font-weight:700;color:var(--accent);}
+  .doc-head .badge .date{font-size:10.5px;color:var(--ink-soft);margin-top:3px;}
   .doc h2{
-    font-size:12.5px;
+    font-size:11px;
     font-weight:700;
-    margin:14px 0 5px;
+    letter-spacing:.03em;
+    margin:16px 0 6px;
     font-family:-apple-system,sans-serif;
     color:var(--accent);
+    text-transform:uppercase;
   }
-  .doc .org{font-size:12px;color:var(--ink-soft);margin-bottom:1px;}
-  .doc .devnum{
-    font-family:-apple-system,sans-serif;
-    font-size:12px;
-    font-weight:600;
-    margin-top:12px;
-  }
-  .doc table{width:100%;border-collapse:collapse;margin:6px 0;font-size:12px;}
-  .doc table td{padding:3px 0;border-bottom:1px solid var(--paper-line);}
-  .doc .total{
-    font-family:-apple-system,sans-serif;
+  .doc .infogrid{font-size:12.5px;}
+  .doc .infogrid .row{display:flex;gap:8px;padding:2px 0;}
+  .doc .infogrid .k{color:var(--ink-soft);min-width:110px;font-family:-apple-system,sans-serif;font-size:11px;}
+  .doc .infogrid .v{color:var(--ink);}
+  .doc table{width:100%;border-collapse:collapse;margin:4px 0;font-size:12.5px;}
+  .doc table td{padding:4px 0;border-bottom:1px solid var(--paper-line);}
+  .doc table td:first-child{color:var(--ink-soft);font-family:-apple-system,sans-serif;font-size:11px;width:130px;}
+  .doc .total-wrap{display:flex;justify-content:flex-end;margin-top:12px;}
+  .doc .total-box{
+    background:var(--accent-soft);
+    border:1px solid var(--accent);
+    border-radius:8px;
+    padding:8px 16px;
     text-align:right;
-    font-size:13px;
-    font-weight:700;
-    margin-top:6px;
+    font-family:-apple-system,sans-serif;
   }
-  .doc ul{margin:4px 0;padding-left:18px;}
-  .doc li{margin-bottom:1px;}
-  .doc hr{border:none;border-top:1px solid var(--paper-line);margin:12px 0;}
-  .doc .footer{font-family:-apple-system,sans-serif;font-size:10px;color:var(--ink-soft);margin-top:16px;}
+  .doc .total-box .lbl{font-size:10.5px;color:var(--ink-soft);}
+  .doc .total-box .amt{font-size:17px;font-weight:700;color:var(--accent);}
+  .doc .tva-note{text-align:right;font-size:10px;font-family:-apple-system,sans-serif;color:var(--ink-soft);margin-top:3px;}
+  .doc ul{list-style:none;margin:4px 0;padding-left:0;}
+  .doc li{position:relative;padding-left:13px;margin-bottom:2px;}
+  .doc li:before{content:"–";position:absolute;left:0;color:var(--accent);}
+  .doc hr{border:none;border-top:1px solid var(--paper-line);margin:14px 0;}
+  .doc .signature{
+    border:1px dashed var(--paper-line);
+    border-radius:6px;
+    padding:10px 14px;
+    margin-top:8px;
+    font-family:-apple-system,sans-serif;
+    font-size:11px;
+    color:var(--ink-soft);
+  }
+  .doc .footer{font-family:-apple-system,sans-serif;font-size:9.5px;color:var(--ink-soft);margin-top:16px;}
   .history{margin-top:8px;}
   .hist-item{
     display:flex;justify-content:space-between;align-items:center;
@@ -191,6 +222,7 @@
     .panel{border-right:none;border-bottom:1px solid var(--paper-line);}
   }
   @media print{
+    html{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
     body{background:#fff;}
     .panel,.toast{display:none !important;}
     .app{display:block;}
@@ -198,13 +230,20 @@
     .doc{
       max-width:none;
       width:100%;
-      border:none;
-      padding:0;
+      border:1px solid var(--paper-line);
+      background:var(--paper);
+      padding:20px 24px;
       min-height:0;
-      font-size:11.5px;
+      font-size:11px;
       line-height:1.3;
+      -webkit-print-color-adjust:exact;
+      print-color-adjust:exact;
     }
-    .doc h2{font-size:11.5px;margin:10px 0 4px;}
+    .doc-head{padding:10px 14px;margin-bottom:12px;}
+    .doc-head .org-name{font-size:12.5px;}
+    .doc-head .badge .num{font-size:14px;}
+    .doc h2{font-size:10px;margin:10px 0 4px;}
+    .doc .total-box .amt{font-size:15px;}
     .doc .footer{font-size:9px;}
   }
 </style>
@@ -300,17 +339,20 @@ Communication client (30h)"></textarea>
 
     <fieldset>
       <legend>Tarification</legend>
+      <label for="duree">Durée (heures)</label>
+      <input type="number" id="duree" min="0" step="0.5" value="0">
       <div class="row2">
         <div>
-          <label for="duree">Durée (heures)</label>
-          <input type="number" id="duree" min="0" step="0.5" value="0">
-        </div>
-        <div>
-          <label for="tarifH">Tarif horaire (€)</label>
+          <label for="tarifH">Tarif horaire HT (€)</label>
           <input type="number" id="tarifH" min="0" step="0.5" value="0">
         </div>
+        <div>
+          <label for="totalHT">Total HT (€)</label>
+          <input type="number" id="totalHT" min="0" step="1" value="0">
+        </div>
       </div>
-      <div class="calc-line"><span>Total HT</span><b id="calcTotal">0,00 €</b></div>
+      <p style="font-size:11.5px;color:var(--ink-soft);margin:6px 0 0;">Remplissez l'un ou l'autre : le second se recalcule automatiquement.</p>
+      <div class="calc-line"><span id="calcLabel">Total</span><b id="calcTotal">0,00 €</b></div>
       <label for="tva">Régime TVA</label>
       <select id="tva">
         <option value="none">TVA non applicable, art. 293B du CGI</option>
@@ -396,15 +438,32 @@ $('financeur').addEventListener('change', ()=>{
   $('autreFinanceurWrap').style.display = $('financeur').value === 'Autre OPCO / FAF' ? 'block' : 'none';
 });
 
-function calcTotal(){
+let lastEdited = 'tarif';
+function round2(n){ return Math.round(n*100)/100; }
+
+function syncAndCalc(){
   const duree = parseFloat($('duree').value)||0;
-  const tarif = parseFloat($('tarifH').value)||0;
-  let total = duree*tarif;
-  if($('tva').value==='20') total = total*1.2;
-  $('calcTotal').textContent = fmtEuro(total);
-  return total;
+  if(lastEdited === 'total'){
+    const totalHT = parseFloat($('totalHT').value)||0;
+    const tarif = duree>0 ? totalHT/duree : 0;
+    $('tarifH').value = duree>0 ? round2(tarif) : 0;
+  } else {
+    const tarif = parseFloat($('tarifH').value)||0;
+    const totalHT = duree*tarif;
+    $('totalHT').value = round2(totalHT);
+  }
+  const totalHT = parseFloat($('totalHT').value)||0;
+  let totalAffiche = totalHT;
+  if($('tva').value==='20') totalAffiche = totalAffiche*1.2;
+  $('calcLabel').textContent = $('tva').value==='20' ? 'Total TTC' : 'Total HT';
+  $('calcTotal').textContent = fmtEuro(totalAffiche);
+  return totalAffiche;
 }
-['duree','tarifH','tva'].forEach(id=>$(id).addEventListener('input', ()=>{calcTotal(); render();}));
+
+$('tarifH').addEventListener('input', ()=>{lastEdited='tarif'; syncAndCalc(); render();});
+$('totalHT').addEventListener('input', ()=>{lastEdited='total'; syncAndCalc(); render();});
+$('duree').addEventListener('input', ()=>{syncAndCalc(); render();});
+$('tva').addEventListener('input', ()=>{syncAndCalc(); render();});
 
 function financeurLabel(){
   const v = $('financeur').value;
@@ -425,7 +484,7 @@ function reglementText(){
 }
 
 function render(){
-  const total = calcTotal();
+  const total = syncAndCalc();
   const numero = $('numero').value || "";
   const date = fmtDate($('date').value);
   const validite = fmtDate($('validite').value);
@@ -436,18 +495,26 @@ function render(){
   const tvaLine = $('tva').value==='none' ? "TVA non applicable, art. 293B du CGI" : "TVA 20% incluse";
 
   const html = `
-    <div class="org">${ORG.nom}</div>
-    <div class="org">${ORG.gerant}</div>
-    <div class="org">${ORG.adresse}</div>
-    <div class="org">Organisme certifié Qualiopi n°${ORG.qualiopi} — Déclaration d'activité ${ORG.declaration}</div>
-    <div class="devnum">DEVIS N° ${numero} — ${date}</div>
+    <div class="doc-head">
+      <div>
+        <div class="org-name">${ORG.nom}</div>
+        <div class="org-sub">${ORG.gerant}<br>${ORG.adresse}<br>Qualiopi n°${ORG.qualiopi} — Déclaration ${ORG.declaration}</div>
+      </div>
+      <div class="badge">
+        <div class="num">DEVIS N° ${numero}</div>
+        <div class="date">${date}</div>
+      </div>
+    </div>
+
     <h2>Bénéficiaire</h2>
-    <div>${$('clientNom').value || '—'}</div>
-    <div>${$('clientStatut').value || ''}</div>
-    <div>${$('clientAdresse').value || ''}</div>
-    <div>${$('clientSiret').value ? 'SIRET : '+$('clientSiret').value : ''}</div>
-    <div>${$('clientTva').value ? 'TVA intra. : '+$('clientTva').value : ''}</div>
-    <div>${$('clientNaf').value ? 'Activité : '+$('clientNaf').value : ''}</div>
+    <div class="infogrid">
+      <div class="row"><span class="k">Nom</span><span class="v">${$('clientNom').value || '—'}</span></div>
+      ${$('clientStatut').value ? `<div class="row"><span class="k">Statut</span><span class="v">${$('clientStatut').value}</span></div>` : ''}
+      ${$('clientAdresse').value ? `<div class="row"><span class="k">Adresse</span><span class="v">${$('clientAdresse').value}</span></div>` : ''}
+      ${$('clientSiret').value ? `<div class="row"><span class="k">SIRET</span><span class="v">${$('clientSiret').value}</span></div>` : ''}
+      ${$('clientTva').value ? `<div class="row"><span class="k">TVA intra.</span><span class="v">${$('clientTva').value}</span></div>` : ''}
+      ${$('clientNaf').value ? `<div class="row"><span class="k">Activité</span><span class="v">${$('clientNaf').value}</span></div>` : ''}
+    </div>
 
     <h2>Formation</h2>
     <table>
@@ -462,16 +529,22 @@ function render(){
     ${objectifs.length ? `<h2>Objectifs</h2><ul>${objectifs.map(o=>`<li>${o}</li>`).join('')}</ul>` : ''}
     ${contenu.length ? `<h2>Contenu pédagogique</h2><ul>${contenu.map(c=>`<li>${c}</li>`).join('')}</ul>` : ''}
 
-    <div class="total">Total : ${fmtEuro(total)}</div>
-    <div style="text-align:right;font-size:11px;font-family:-apple-system,sans-serif;color:var(--ink-soft);">${tvaLine}</div>
+    <div class="total-wrap">
+      <div class="total-box">
+        <div class="lbl">${$('tva').value==='20' ? 'Total TTC' : 'Total HT'}</div>
+        <div class="amt">${fmtEuro(total)}</div>
+      </div>
+    </div>
+    <div class="tva-note">${tvaLine}</div>
 
     <hr>
     <h2>Règlement</h2>
-    <div>${reglementText()}</div>
+    <div style="font-size:12.5px;">${reglementText()}</div>
 
     <hr>
-    <div style="font-family:-apple-system,sans-serif;font-size:12px;">Devis valable jusqu'au ${validite}.</div>
-    <div style="font-family:-apple-system,sans-serif;font-size:12px;margin-top:14px;">Bon pour accord — Date, signature et cachet :</div>
+    <div style="font-family:-apple-system,sans-serif;font-size:11.5px;color:var(--ink-soft);">Devis valable jusqu'au ${validite}.</div>
+
+    <div class="signature">Bon pour accord — date, signature et cachet</div>
 
     <div class="footer">
       Dispensé d'immatriculation au RCS et au Répertoire des Métiers.<br>
@@ -552,7 +625,7 @@ function renderHistory(list){
 $('btnSave').addEventListener('click', async ()=>{
   if(!validate()) return;
   render();
-  const total = calcTotal();
+  const total = syncAndCalc();
   const entry = {
     numero: $('numero').value,
     date: $('date').value,
@@ -591,6 +664,8 @@ $('btnReset').addEventListener('click', ()=>{
    'intitule','objectifs','contenu','rythme','dateDebut','dateFin'].forEach(id=>$(id).value='');
   $('duree').value = 0;
   $('tarifH').value = 0;
+  $('totalHT').value = 0;
+  lastEdited = 'tarif';
   $('date').value = todayISO();
   $('validite').value = addMonthISO(todayISO(),1);
   render();
