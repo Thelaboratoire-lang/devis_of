@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Générateur de devis — Apprendre L'anglais</title>
+<style>
+  :root{
+    --ink:#1c2b3a;
+    --ink-soft:#3d5164;
+    --paper:#faf7f1;
+    --paper-line:#e4ddd0;
+    --accent:#1f5c54;
+    --accent-soft:#e5efed;
+    --danger:#a3352f;
+    --danger-bg:#fbeceb;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+    background:#f2f0ea;
+    color:var(--ink);
+  }
+  .app{
+    display:grid;
+    grid-template-columns:400px 1fr;
+    min-height:100vh;
+  }
+  .panel{
+    background:#fff;
+    padding:28px 26px;
+    overflow-y:auto;
+    border-right:1px solid var(--paper-line);
+  }
+  .panel h1{
+    font-size:18px;
+    font-weight:600;
+    margin:0 0 2px;
+    color:var(--ink);
+  }
+  .panel .sub{
+    font-size:13px;
+    color:var(--ink-soft);
+    margin:0 0 20px;
+  }
+  fieldset{
+    border:none;
+    padding:0;
+    margin:0 0 22px;
+  }
+  legend{
+    font-size:12px;
+    font-weight:600;
+    letter-spacing:.02em;
+    color:var(--accent);
+    margin-bottom:10px;
+    padding:0;
+  }
+  label{
+    display:block;
+    font-size:12.5px;
+    color:var(--ink-soft);
+    margin:10px 0 4px;
+  }
+  label:first-child{margin-top:0;}
+  input[type=text],input[type=number],input[type=date],select,textarea{
+    width:100%;
+    padding:8px 10px;
+    font-size:13.5px;
+    border:1px solid #d7d2c6;
+    border-radius:6px;
+    background:#fdfcfa;
+    color:var(--ink);
+    font-family:inherit;
+  }
+  textarea{resize:vertical;min-height:64px;line-height:1.5;}
+  input:focus,select:focus,textarea:focus{
+    outline:none;
+    border-color:var(--accent);
+    box-shadow:0 0 0 2px var(--accent-soft);
+  }
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .fixed-box{
+    background:var(--accent-soft);
+    border-radius:8px;
+    padding:12px 14px;
+    font-size:12.5px;
+    line-height:1.6;
+    color:var(--ink-soft);
+  }
+  .fixed-box b{color:var(--ink);}
+  .calc-line{
+    display:flex;
+    justify-content:space-between;
+    font-size:13px;
+    padding:8px 10px;
+    background:#f6f4ee;
+    border-radius:6px;
+    margin-top:8px;
+  }
+  .calc-line b{color:var(--accent);}
+  .btn-row{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap;}
+  button{
+    font-family:inherit;
+    font-size:13px;
+    padding:9px 14px;
+    border-radius:6px;
+    border:1px solid #d7d2c6;
+    background:#fff;
+    color:var(--ink);
+    cursor:pointer;
+  }
+  button:hover{background:#f6f4ee;}
+  button.primary{
+    background:var(--accent);
+    border-color:var(--accent);
+    color:#fff;
+    font-weight:600;
+  }
+  button.primary:hover{background:#184a44;}
+  .error{
+    font-size:12px;
+    color:var(--danger);
+    background:var(--danger-bg);
+    padding:6px 9px;
+    border-radius:5px;
+    margin-top:6px;
+    display:none;
+  }
+  .preview-wrap{
+    padding:32px 40px;
+    overflow-y:auto;
+    display:flex;
+    justify-content:center;
+  }
+  .doc{
+    width:100%;
+    max-width:640px;
+    background:var(--paper);
+    border:1px solid var(--paper-line);
+    padding:44px 46px;
+    font-family:Georgia,"Times New Roman",serif;
+    color:var(--ink);
+    line-height:1.55;
+    min-height:600px;
+  }
+  .doc h2{
+    font-size:15px;
+    font-weight:700;
+    margin:22px 0 8px;
+    font-family:-apple-system,sans-serif;
+    color:var(--accent);
+  }
+  .doc .org{font-size:13px;color:var(--ink-soft);margin-bottom:2px;}
+  .doc .devnum{
+    font-family:-apple-system,sans-serif;
+    font-size:13px;
+    font-weight:600;
+    margin-top:18px;
+  }
+  .doc table{width:100%;border-collapse:collapse;margin:10px 0;font-size:13px;}
+  .doc table td{padding:5px 0;border-bottom:1px solid var(--paper-line);}
+  .doc .total{
+    font-family:-apple-system,sans-serif;
+    text-align:right;
+    font-size:14px;
+    font-weight:700;
+    margin-top:8px;
+  }
+  .doc ul{margin:6px 0;padding-left:20px;}
+  .doc hr{border:none;border-top:1px solid var(--paper-line);margin:20px 0;}
+  .doc .footer{font-family:-apple-system,sans-serif;font-size:11px;color:var(--ink-soft);margin-top:24px;}
+  .history{margin-top:8px;}
+  .hist-item{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:8px 10px;border:1px solid #e6e2d6;border-radius:6px;
+    font-size:12.5px;margin-bottom:6px;background:#fdfcfa;
+  }
+  .hist-item span.n{font-weight:600;color:var(--accent);margin-right:6px;}
+  .hist-item button{padding:4px 9px;font-size:11.5px;}
+  .toast{
+    position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+    background:var(--ink);color:#fff;padding:8px 16px;border-radius:6px;
+    font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s;
+  }
+  .toast.show{opacity:1;}
+  @media(max-width:860px){
+    .app{grid-template-columns:1fr;}
+    .panel{border-right:none;border-bottom:1px solid var(--paper-line);}
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="panel">
+    <h1>Générateur de devis</h1>
+    <p class="sub">Apprendre L'anglais — E.I. Sarra Lamloumi</p>
+
+    <div class="fixed-box">
+      <b>Organisme (fixe)</b><br>
+      Apprendre L'anglais — E.I. Sarra Lamloumi<br>
+      32 Boulevard de la Libération, 13001 Marseille<br>
+      SIRET 883 133 779 00024 — Qualiopi n°311877<br>
+      Déclaration d'activité 93132140313
+    </div>
+
+    <fieldset>
+      <legend>Devis</legend>
+      <div class="row2">
+        <div>
+          <label for="numero">Numéro</label>
+          <input type="text" id="numero" value="16">
+        </div>
+        <div>
+          <label for="date">Date du devis</label>
+          <input type="date" id="date">
+        </div>
+      </div>
+      <label for="validite">Valable jusqu'au</label>
+      <input type="date" id="validite">
+    </fieldset>
+
+    <fieldset>
+      <legend>Bénéficiaire</legend>
+      <label for="clientNom">Nom complet</label>
+      <input type="text" id="clientNom" placeholder="Madame / Monsieur Prénom NOM">
+      <label for="clientStatut">Statut professionnel</label>
+      <input type="text" id="clientStatut" placeholder="Entrepreneur individuel, salarié...">
+      <div class="row2">
+        <div>
+          <label for="clientSiret">SIRET</label>
+          <input type="text" id="clientSiret" placeholder="Si indépendant">
+        </div>
+        <div>
+          <label for="clientTva">N° TVA intra.</label>
+          <input type="text" id="clientTva" placeholder="Si applicable">
+        </div>
+      </div>
+      <label for="clientAdresse">Adresse</label>
+      <input type="text" id="clientAdresse" placeholder="Rue, code postal, ville">
+      <label for="clientNaf">Code NAF / activité</label>
+      <input type="text" id="clientNaf" placeholder="ex : 7410Z - Design">
+    </fieldset>
+
+    <fieldset>
+      <legend>Formation</legend>
+      <label for="intitule">Intitulé</label>
+      <input type="text" id="intitule" placeholder="Anglais professionnel appliqué à...">
+      <label for="objectifs">Objectifs (un par ligne)</label>
+      <textarea id="objectifs" placeholder="Acquérir le vocabulaire professionnel...
+Présenter son activité en anglais..."></textarea>
+      <label for="contenu">Contenu pédagogique (un par ligne)</label>
+      <textarea id="contenu" placeholder="Vocabulaire professionnel (25h)
+Communication client (30h)"></textarea>
+      <div class="row2">
+        <div>
+          <label for="modalite">Modalité</label>
+          <select id="modalite">
+            <option>Présentiel</option>
+            <option>Distanciel / e-learning</option>
+            <option>Mixte</option>
+          </select>
+        </div>
+        <div>
+          <label for="rythme">Rythme</label>
+          <input type="text" id="rythme" placeholder="ex : Lundi-vendredi, 6h/jour">
+        </div>
+      </div>
+      <div class="row2">
+        <div>
+          <label for="dateDebut">Date de début</label>
+          <input type="date" id="dateDebut">
+        </div>
+        <div>
+          <label for="dateFin">Date de fin</label>
+          <input type="date" id="dateFin">
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Tarification</legend>
+      <div class="row2">
+        <div>
+          <label for="duree">Durée (heures)</label>
+          <input type="number" id="duree" min="0" step="0.5" value="0">
+        </div>
+        <div>
+          <label for="tarifH">Tarif horaire (€)</label>
+          <input type="number" id="tarifH" min="0" step="0.5" value="0">
+        </div>
+      </div>
+      <div class="calc-line"><span>Total HT</span><b id="calcTotal">0,00 €</b></div>
+      <label for="tva">Régime TVA</label>
+      <select id="tva">
+        <option value="none">TVA non applicable, art. 293B du CGI</option>
+        <option value="20">TVA 20% en sus</option>
+      </select>
+    </fieldset>
+
+    <fieldset>
+      <legend>Financement / OPCO</legend>
+      <label for="financeur">Organisme financeur sollicité</label>
+      <select id="financeur">
+        <option>FIFPL</option>
+        <option>AGEFICE</option>
+        <option>FAFCEA</option>
+        <option>Autre OPCO / FAF</option>
+        <option>Aucun — réglement direct par le client</option>
+        <option>CPF</option>
+      </select>
+      <div id="autreFinanceurWrap" style="display:none;">
+        <label for="autreFinanceur">Nom du financeur</label>
+        <input type="text" id="autreFinanceur" placeholder="Nom de l'OPCO">
+      </div>
+      <div class="error" id="finError">Merci de préciser le nom du financeur.</div>
+    </fieldset>
+
+    <div class="btn-row">
+      <button class="primary" id="btnGenerate">Mettre à jour l'aperçu</button>
+      <button id="btnCopy">Copier le texte</button>
+      <button id="btnSave">Enregistrer + n° suivant</button>
+      <button id="btnReset">Nouveau devis</button>
+    </div>
+
+    <fieldset style="margin-top:24px;">
+      <legend>Historique</legend>
+      <div class="history" id="historyList"><span style="font-size:12px;color:var(--ink-soft);">Aucun devis enregistré pour l'instant.</span></div>
+    </fieldset>
+  </div>
+
+  <div class="preview-wrap">
+    <div class="doc" id="docPreview"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const ORG = {
+  nom: "Apprendre L'anglais",
+  gerant: "E.I. Sarra Lamloumi",
+  adresse: "32 Boulevard de la Libération, 13001 Marseille",
+  siret: "883 133 779 00024",
+  qualiopi: "311877",
+  declaration: "93132140313",
+  web: "apprendrelanglais-uk.com",
+  email: "office@apprendrelanglais-uk.com",
+  tel: "0491920945"
+};
+
+function fmtDate(iso){
+  if(!iso) return "";
+  const d = new Date(iso+"T00:00:00");
+  return d.toLocaleDateString('fr-FR', {day:'numeric', month:'long', year:'numeric'});
+}
+function fmtEuro(n){
+  return n.toLocaleString('fr-FR', {minimumFractionDigits:2, maximumFractionDigits:2}) + " €";
+}
+function todayISO(){
+  return new Date().toISOString().slice(0,10);
+}
+function addMonthISO(iso, months){
+  const d = new Date(iso+"T00:00:00");
+  d.setMonth(d.getMonth()+months);
+  return d.toISOString().slice(0,10);
+}
+
+const $ = id => document.getElementById(id);
+
+$('date').value = todayISO();
+$('validite').value = addMonthISO(todayISO(),1);
+
+$('financeur').addEventListener('change', ()=>{
+  $('autreFinanceurWrap').style.display = $('financeur').value === 'Autre OPCO / FAF' ? 'block' : 'none';
+});
+
+function calcTotal(){
+  const duree = parseFloat($('duree').value)||0;
+  const tarif = parseFloat($('tarifH').value)||0;
+  let total = duree*tarif;
+  if($('tva').value==='20') total = total*1.2;
+  $('calcTotal').textContent = fmtEuro(total);
+  return total;
+}
+['duree','tarifH','tva'].forEach(id=>$(id).addEventListener('input', ()=>{calcTotal(); render();}));
+
+function financeurLabel(){
+  const v = $('financeur').value;
+  if(v === 'Autre OPCO / FAF') return $('autreFinanceur').value.trim();
+  return v;
+}
+
+function reglementText(){
+  const v = $('financeur').value;
+  if(v === 'Aucun — réglement direct par le client'){
+    return "Formation réglée directement par le bénéficiaire.";
+  }
+  if(v === 'CPF'){
+    return "Formation mobilisée via le Compte Personnel de Formation (CPF) de la bénéficiaire.";
+  }
+  const label = financeurLabel() || "l'organisme financeur";
+  return "Formation à régler par la bénéficiaire. Une demande de prise en charge sera déposée par la bénéficiaire auprès de "+label+".";
+}
+
+function render(){
+  const total = calcTotal();
+  const numero = $('numero').value || "";
+  const date = fmtDate($('date').value);
+  const validite = fmtDate($('validite').value);
+  const objectifs = $('objectifs').value.split("\n").map(s=>s.trim()).filter(Boolean);
+  const contenu = $('contenu').value.split("\n").map(s=>s.trim()).filter(Boolean);
+  const dateDebut = fmtDate($('dateDebut').value);
+  const dateFin = fmtDate($('dateFin').value);
+  const tvaLine = $('tva').value==='none' ? "TVA non applicable, art. 293B du CGI" : "TVA 20% incluse";
+
+  const html = `
+    <div class="org">${ORG.nom}</div>
+    <div class="org">${ORG.gerant}</div>
+    <div class="org">${ORG.adresse}</div>
+    <div class="org">Organisme certifié Qualiopi n°${ORG.qualiopi} — Déclaration d'activité ${ORG.declaration}</div>
+    <div class="devnum">DEVIS N° ${numero} — ${date}</div>
+    <h2>Bénéficiaire</h2>
+    <div>${$('clientNom').value || '—'}</div>
+    <div>${$('clientStatut').value || ''}</div>
+    <div>${$('clientAdresse').value || ''}</div>
+    <div>${$('clientSiret').value ? 'SIRET : '+$('clientSiret').value : ''}</div>
+    <div>${$('clientTva').value ? 'TVA intra. : '+$('clientTva').value : ''}</div>
+    <div>${$('clientNaf').value ? 'Activité : '+$('clientNaf').value : ''}</div>
+
+    <h2>Formation</h2>
+    <table>
+      <tr><td>Intitulé</td><td>${$('intitule').value || '—'}</td></tr>
+      <tr><td>Durée</td><td>${$('duree').value || 0} heures</td></tr>
+      <tr><td>Modalité</td><td>${$('modalite').value}</td></tr>
+      <tr><td>Rythme</td><td>${$('rythme').value || '—'}</td></tr>
+      <tr><td>Période</td><td>${dateDebut && dateFin ? 'du '+dateDebut+' au '+dateFin : '—'}</td></tr>
+      <tr><td>Tarif horaire</td><td>${fmtEuro(parseFloat($('tarifH').value)||0)}</td></tr>
+    </table>
+
+    ${objectifs.length ? `<h2>Objectifs</h2><ul>${objectifs.map(o=>`<li>${o}</li>`).join('')}</ul>` : ''}
+    ${contenu.length ? `<h2>Contenu pédagogique</h2><ul>${contenu.map(c=>`<li>${c}</li>`).join('')}</ul>` : ''}
+
+    <div class="total">Total : ${fmtEuro(total)}</div>
+    <div style="text-align:right;font-size:11px;font-family:-apple-system,sans-serif;color:var(--ink-soft);">${tvaLine}</div>
+
+    <hr>
+    <h2>Règlement</h2>
+    <div>${reglementText()}</div>
+
+    <hr>
+    <div style="font-family:-apple-system,sans-serif;font-size:12px;">Devis valable jusqu'au ${validite}.</div>
+    <div style="font-family:-apple-system,sans-serif;font-size:12px;margin-top:14px;">Bon pour accord — Date, signature et cachet :</div>
+
+    <div class="footer">
+      Dispensé d'immatriculation au RCS et au Répertoire des Métiers.<br>
+      ${ORG.nom} — ${ORG.gerant} — Entreprise Individuelle — SIRET : ${ORG.siret}<br>
+      Web : ${ORG.web} — Email : ${ORG.email} — Tél : ${ORG.tel}
+    </div>
+  `;
+  $('docPreview').innerHTML = html;
+}
+
+function validate(){
+  let ok = true;
+  if($('financeur').value === 'Autre OPCO / FAF' && !$('autreFinanceur').value.trim()){
+    $('finError').style.display = 'block';
+    ok = false;
+  } else {
+    $('finError').style.display = 'none';
+  }
+  return ok;
+}
+
+$('btnGenerate').addEventListener('click', ()=>{
+  if(!validate()) return;
+  render();
+  showToast("Aperçu mis à jour");
+});
+
+document.querySelectorAll('input,select,textarea').forEach(el=>{
+  el.addEventListener('input', render);
+});
+
+function docToText(){
+  return $('docPreview').innerText;
+}
+
+$('btnCopy').addEventListener('click', async ()=>{
+  if(!validate()) return;
+  try{
+    await navigator.clipboard.writeText(docToText());
+    showToast("Texte du devis copié");
+  }catch(e){
+    showToast("Impossible de copier automatiquement");
+  }
+});
+
+function showToast(msg){
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 1800);
+}
+
+async function loadHistory(){
+  try{
+    const res = await window.storage.get('devis:history', false);
+    const list = res ? JSON.parse(res.value) : [];
+    renderHistory(list);
+    return list;
+  }catch(e){
+    renderHistory([]);
+    return [];
+  }
+}
+
+function renderHistory(list){
+  const wrap = $('historyList');
+  if(!list.length){
+    wrap.innerHTML = '<span style="font-size:12px;color:var(--ink-soft);">Aucun devis enregistré pour l\\'instant.</span>';
+    return;
+  }
+  wrap.innerHTML = list.slice().reverse().map(item => `
+    <div class="hist-item">
+      <div><span class="n">N°${item.numero}</span>${item.client} — ${fmtEuro(item.total)}</div>
+    </div>
+  `).join('');
+}
+
+$('btnSave').addEventListener('click', async ()=>{
+  if(!validate()) return;
+  render();
+  const total = calcTotal();
+  const entry = {
+    numero: $('numero').value,
+    date: $('date').value,
+    client: $('clientNom').value || 'Sans nom',
+    total: total,
+    financeur: financeurLabel()
+  };
+  try{
+    const list = await loadHistory();
+    list.push(entry);
+    await window.storage.set('devis:history', JSON.stringify(list), false);
+    const nextNum = (parseInt($('numero').value)||0) + 1;
+    await window.storage.set('devis:counter', String(nextNum), false);
+    renderHistory(list);
+    $('numero').value = nextNum;
+    render();
+    showToast("Devis N°"+entry.numero+" enregistré — prochain numéro : "+nextNum);
+  }catch(e){
+    showToast("Erreur d'enregistrement");
+  }
+});
+
+$('btnReset').addEventListener('click', ()=>{
+  ['clientNom','clientStatut','clientSiret','clientTva','clientAdresse','clientNaf',
+   'intitule','objectifs','contenu','rythme','dateDebut','dateFin'].forEach(id=>$(id).value='');
+  $('duree').value = 0;
+  $('tarifH').value = 0;
+  $('date').value = todayISO();
+  $('validite').value = addMonthISO(todayISO(),1);
+  render();
+  showToast("Nouveau devis vierge");
+});
+
+(async function init(){
+  try{
+    const res = await window.storage.get('devis:counter', false);
+    if(res) $('numero').value = res.value;
+  }catch(e){}
+  await loadHistory();
+  render();
+})();
+</script>
+
+</body>
+</html>
