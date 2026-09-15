@@ -188,6 +188,19 @@
     .app{grid-template-columns:1fr;}
     .panel{border-right:none;border-bottom:1px solid var(--paper-line);}
   }
+  @media print{
+    body{background:#fff;}
+    .panel,.toast{display:none !important;}
+    .app{display:block;}
+    .preview-wrap{padding:0;display:block;}
+    .doc{
+      max-width:none;
+      width:100%;
+      border:none;
+      padding:0;
+      min-height:0;
+    }
+  }
 </style>
 </head>
 <body>
@@ -321,6 +334,7 @@ Communication client (30h)"></textarea>
       <button class="primary" id="btnGenerate">Mettre à jour l'aperçu</button>
       <button id="btnCopy">Copier le texte</button>
       <button id="btnSave">Enregistrer + n° suivant</button>
+      <button id="btnPdf" class="primary">Exporter en PDF</button>
       <button id="btnReset">Nouveau devis</button>
     </div>
 
@@ -401,7 +415,7 @@ function reglementText(){
     return "Formation mobilisée via le Compte Personnel de Formation (CPF) de la bénéficiaire.";
   }
   const label = financeurLabel() || "l'organisme financeur";
-  return "Formation à régler par la bénéficiaire. Une demande de prise en charge sera déposée par la bénéficiaire auprès de "+label+".";
+  return "Une demande de prise en charge sera déposée par la bénéficiaire auprès de "+label+".";
 }
 
 function render(){
@@ -553,6 +567,17 @@ $('btnSave').addEventListener('click', async ()=>{
   }catch(e){
     showToast("Erreur d'enregistrement");
   }
+});
+
+$('btnPdf').addEventListener('click', ()=>{
+  if(!validate()) return;
+  render();
+  const numero = $('numero').value || 'devis';
+  const client = ($('clientNom').value || 'client').trim().replace(/\s+/g,'-');
+  const prevTitle = document.title;
+  document.title = "Devis-"+numero+"-"+client;
+  window.print();
+  document.title = prevTitle;
 });
 
 $('btnReset').addEventListener('click', ()=>{
